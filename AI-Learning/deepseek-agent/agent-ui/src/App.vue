@@ -122,11 +122,7 @@ async function sendMessage() {
     return;
   }
 
-  // 显示用户消息
-  messages.value.push({
-    role: "user",
-    content: question
-  });
+  
 
   inputText.value = "";
   loading.value = true;
@@ -134,11 +130,12 @@ async function sendMessage() {
   // 先创建一个空的AI消息气泡
   const answerIndex = messages.value.length;
 
+  // 显示用户消息
   messages.value.push({
     role: "assistant",
-    content: ""
+    content: "",
+    steps: []
   });
-
   await scrollToBottom();
 
   try {
@@ -230,6 +227,18 @@ async function sendMessage() {
           throw new Error(data.message);
         }
 
+        // 接收Agent执行状态
+        if (eventName === "status") {
+
+          messages.value[answerIndex].steps.push({
+            type: data.type,
+            text: data.text,
+            tool: data.tool || null
+          });
+
+          await scrollToBottom();
+        }
+
         // 收到完成事件
         if (eventName === "done") {
           receivedDone = true;
@@ -307,9 +316,50 @@ function handleKeydown(event) {
           class="message-row"
           :class="item.role"
         >
-          <div class="message-bubble">
+        <div
+          v-if="item.content || item.steps?.length"
+          class="message-bubble"
+        >
+
+          <!-- Agent执行过程 -->
+          <div
+            v-if="item.steps?.length"
+            class="execution-panel"
+          >
+
+            <div class="execution-title">
+              执行记录
+            </div>
+
+            <div
+              v-for="(step, stepIndex) in item.steps"
+              :key="stepIndex"
+              class="execution-step"
+              :class="step.type"
+            >
+
+              <span class="step-icon">
+                {{
+                  step.type === "tool_end"
+                    ? "✓"
+                    : step.type === "tool_error"
+                      ? "!"
+                      : "•"
+                }}
+              </span>
+
+              <span>{{ step.text }}</span>
+
+            </div>
+
+          </div>
+
+          <!-- AI回答内容 -->
+          <div v-if="item.content" class="answer-content">
             {{ item.content }}
           </div>
+
+        </div>
         </div>
 
         <!-- AI正在回答 -->
@@ -359,6 +409,54 @@ function handleKeydown(event) {
 </template>
 
 <style scoped>
+/* Agent执行记录面板 */
+
+.execution-panel {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #d5dfec;
+}
+
+.execution-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #385477;
+  margin-bottom: 10px;
+}
+
+.execution-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 7px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #66758a;
+}
+
+.step-icon {
+  width: 16px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.execution-step.tool_end .step-icon {
+  color: #179467;
+}
+
+.execution-step.tool_error {
+  color: #c24141;
+}
+
+.execution-step.model .step-icon,
+.execution-step.tool_start .step-icon {
+  color: #2967cc;
+}
+
+.answer-content {
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
 .page {
   min-height: 100vh;
   padding: 24px;
