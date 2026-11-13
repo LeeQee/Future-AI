@@ -621,12 +621,15 @@ async function runAgentStream(question, messages, onText,onStatus = () => {}) {
       const toolName = call.function.name;
 
       const label = TOOL_LABELS[toolName] || toolName;
-
+      const args = JSON.parse(
+        call.function.arguments || "{}"
+      );
       // ① 通知：开始执行工具
       onStatus({
         type: "tool_start",
         tool: toolName,
-        text: `开始执行：${label}`
+        text: `开始执行：${label}`,
+        args
       });
 
       let result;
@@ -668,7 +671,8 @@ async function runAgentStream(question, messages, onText,onStatus = () => {}) {
         tool: toolName,
         text: result?.error
           ? `执行失败：${label}`
-          : `执行完成：${label}`
+          : `执行完成：${label}`,
+          result
       });
 
       // ④ 把工具结果返回给模型
@@ -837,6 +841,7 @@ const server = createServer(async (req, res) => {
   try {
     body = await readJson(req);
   } catch {
+    console.error("请求体不是有效的JSON");
     sendJson(res, 400, {
       error: "请求必须是有效的JSON"
     });
@@ -845,7 +850,7 @@ const server = createServer(async (req, res) => {
 
   const { userId, sessionId, message } = body || {};
 
-  const validId = /^[a-zA-Z0-9_-]{1,32}$/;
+  const validId = /^[a-zA-Z0-9_-]{1,232}$/;
 
   if (
     typeof userId !== "string" ||
@@ -886,7 +891,7 @@ const server = createServer(async (req, res) => {
         `data: ${JSON.stringify(data)}\n\n`
       );
     }
-
+    
     try {
 
       // 执行流式Agent

@@ -663,5 +663,104 @@
   {
     "role": "assistant",
     "content": "2026年10月20日 两站用电量对比（教学模拟数据）：\n\n| 车站 | 用电量 |\n|------|--------|\n| A站 | 14,000 kWh |\n| B站 | 9,800 kWh |\n\n**差异：A站比B站多 4,200 kWh，高出约 42.86%。**\n\n⚠️ 说明：本次A站数据为 14,000 kWh（与此前某次出现的 12,500 kWh 不同，教学模拟数据存在波动）。按当前最新数据，两站差距接近四成，较为显著，建议核查A站是否有大功率设备或可优化的用能环节。\n\n需要我帮你把两站分项能耗拆解对比吗？"
+  },
+  {
+    "role": "user",
+    "content": "你能做什么"
+  },
+  {
+    "role": "assistant",
+    "content": "我是**地铁能源管理助手** 🚇，主要能做这些事：\n\n**1. 查询车站用电量** 🔍\n给我车站名和日期，我查当天的能耗数据。\n\n**2. 查询车站信息** 📍\n查某车站所属的线路和所在区域。\n\n**3. 比较两站用电量** 📊\n给两个车站，帮你计算差异（kWh 和百分比）。\n\n**4. 分析能耗趋势** 📈\n查某车站在一段日期内的用电变化，给出平均、最大最小、变化率和异常提示。\n\n说明：我使用的是**教学模拟数据**，查询能耗都会调用工具获取，不编造数据。\n\n有想查的，告诉我车站名和日期就行～"
+  },
+  {
+    "role": "user",
+    "content": "比较A站和B站的能耗"
+  },
+  {
+    "role": "assistant",
+    "content": "你好，要比较两站能耗，我需要先跟你确认一下信息：\n\n1. **哪一天**？（比如 2026年10月20日）\n2. 车站确认是 **A站 和 B站** 吗？\n\n告诉我具体日期，我就帮你查询并计算差异～"
+  },
+  {
+    "role": "user",
+    "content": "2026年10月20日"
+  },
+  {
+    "role": "assistant",
+    "content": null,
+    "tool_calls": [
+      {
+        "id": "call_00_UjUBmI6TMJLHNltOzK3b5623",
+        "type": "function",
+        "function": {
+          "name": "get_station_energy",
+          "arguments": "{\"station\": \"A站\", \"date\": \"2026-10-20\"}"
+        }
+      },
+      {
+        "id": "call_01_YczING8FidDPUsxrEqWx8764",
+        "type": "function",
+        "function": {
+          "name": "get_station_energy",
+          "arguments": "{\"station\": \"B站\", \"date\": \"2026-10-20\"}"
+        }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "tool_call_id": "call_00_UjUBmI6TMJLHNltOzK3b5623",
+    "content": "{\"station\":\"A站\",\"date\":\"2026-10-20\",\"energy\":14000,\"unit\":\"kWh\",\"source\":\"SQLite数据库（教学模拟数据）\"}"
+  },
+  {
+    "role": "tool",
+    "tool_call_id": "call_01_YczING8FidDPUsxrEqWx8764",
+    "content": "{\"station\":\"B站\",\"date\":\"2026-10-20\",\"energy\":9800,\"unit\":\"kWh\",\"source\":\"SQLite数据库（教学模拟数据）\"}"
+  },
+  {
+    "role": "assistant",
+    "content": null,
+    "tool_calls": [
+      {
+        "id": "call_00_slzu4ymn2dLFBW6L8ODu6114",
+        "type": "function",
+        "function": {
+          "name": "calculate_energy_difference",
+          "arguments": "{\"energyA\": 14000, \"energyB\": 9800}"
+        }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "tool_call_id": "call_00_slzu4ymn2dLFBW6L8ODu6114",
+    "content": "{\"differenceKwh\":4200,\"percentage\":42.86,\"comparisonBase\":\"第二个车站\"}"
+  },
+  {
+    "role": "assistant",
+    "content": "2026年10月20日 两站能耗对比（教学模拟数据）：\n\n| 车站 | 用电量 |\n|------|--------|\n| A站 | 14,000 kWh |\n| B站 | 9,800 kWh |\n\n**差异：A站比B站多 4,200 kWh，高出约 42.86%。**\n\nA站明显高于B站，接近四成差距，建议进一步核查A站的分项能耗（空调、照明、动力等），定位高耗能原因。需要我帮你分析两站的分项或趋势吗？"
+  },
+  {
+    "role": "user",
+    "content": "你好"
+  },
+  {
+    "role": "assistant",
+    "content": "你好！😊 有需要查的能耗数据吗？\n\n可以告诉我：\n- 车站名 + 日期（查用电量）\n- 或想比较的两个车站 + 日期\n\n随时开始～"
+  },
+  {
+    "role": "user",
+    "content": "你好"
+  },
+  {
+    "role": "assistant",
+    "content": "你好！😊 我在的。\n\n要查什么随时说，比如：\n- \"查A站2026年10月20日的用电量\"\n- \"比较A站和B站10月20日的能耗\"\n- \"分析A站10月20日到21日的趋势\"\n\n需要我做什么？"
+  },
+  {
+    "role": "user",
+    "content": "你好"
+  },
+  {
+    "role": "assistant",
+    "content": "你好！😊 随时待命～\n\n需要查能耗、比数据、看趋势，告诉我车站名和日期就行。"
   }
 ]
